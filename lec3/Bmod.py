@@ -12,12 +12,8 @@ def getChild(node,Matrix,close): # 子ノードを小さい順に返す．[1,2,3
             continue
         else:
             if not idx in close:
-                 result.append(idx)
+                result.append(idx)
     return result
-
-def setClose(list, close):
-    for item in list:
-        close.append(item)
 
 def setOpen(list, open): # list は小さい順
     for item in reversed(list):
@@ -39,20 +35,18 @@ def main():
     # DFS
     open = []
     close = []
-    finite = []
     init = 1
-    # open.append([0,init])
     open.append(init)
-    time = 1
+    time = 0
     output = []
     for i in range(n):
         vec = [i+1,0,0]
         output.append(vec)
 
-    # close.append(init)
     state = 1
     while(open):
         x = open[-1]
+        time += 1
         close.append(x)
         if output[x-1][1] == 0:
             output[x-1][1] = time
@@ -60,23 +54,22 @@ def main():
             break
         child = getChild(x,Matrix,close)
         if not child:
+            if state == 1:
+                time += 1
+            state = 0
             open.pop()
-            time += 1
             if output[x-1][2] == 0:
+                if output[x-1][1] == time:
+                    time += 1
                 output[x-1][2] = time
-            # if state == 1:
-            #     state = 0
-            #     time += 1
             continue
         else:
-            # setClose(child,close)
+            if state == 0:
+                time -= 1
+            state = 1
             setOpen(child,open)
-            time += 1
-            # if state == 0:
-            #     state = 1
-                # time -= 1
 
-    output[0][2] = time
+    output[0][2] = max(sum(output,[])) + 1
     
     for i in output:
         print(*i)
